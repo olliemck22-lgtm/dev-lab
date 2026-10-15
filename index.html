@@ -6,7 +6,7 @@
 <title>Dev Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a171e;--card:#0f222b;--card2:#132b36;--line:#1f3b48;--text:#e4f0f4;--muted:#87a1aa;--accent:#2bb0c8;--green:#3dd68c;--red:#f0606a;--gold:#e8c35a}
+:root{--bg:#0a171e;--card:#0f222b;--card2:#132b36;--line:#1f3b48;--text:#e4f0f4;--muted:#87a1aa;--accent:#2bb0c8;--red:#f0606a;--gold:#e8c35a}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,sans-serif}
 .wrap{max-width:860px;margin:0 auto;padding:22px 16px 80px}
@@ -18,7 +18,7 @@ a{color:var(--accent);text-decoration:none}
 .tab{font-size:12px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-left:6px}
 .tab.on{background:var(--accent);color:#06222a;border-color:var(--accent)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
-.muted{color:var(--muted)}.neg{color:var(--red)}.pos{color:var(--green)}
+.muted{color:var(--muted)}.neg{color:var(--red)}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
 .btn{font:600 13px Inter,sans-serif;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
 .btn.pri{background:var(--accent);border-color:var(--accent);color:#06222a}
@@ -46,10 +46,6 @@ textarea{min-height:110px;resize:vertical}
 label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
 .fields{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:640px){.fields{grid-template-columns:1fr 1fr}.steps li{grid-template-columns:56px 70px 1fr}.steps li .h{display:none}}
-.tbl{width:100%;border-collapse:collapse;font-size:13px}
-.tbl th{text-align:left;color:var(--muted);font-weight:500;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
-.tbl td{padding:7px 6px;border-bottom:1px solid #16303b;white-space:nowrap}
-.scroll{overflow-x:auto}
 .modalbg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding:30px 12px;overflow:auto;z-index:20}
 .modal{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;width:100%;max-width:640px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#06222a;padding:9px 16px;border-radius:999px;font-weight:600;font-size:13px;z-index:30}
@@ -62,28 +58,20 @@ label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
   <div id="app"></div>
 </div>
 <script>
-const KEY='devlab.v2';
+const KEY='devlab.v3';
 const uid=()=>Math.random().toString(36).slice(2,10);
 const isNum=n=>typeof n==='number'&&isFinite(n);
 const num=v=>(v===''||v==null)?null:(isFinite(Number(v))?Number(v):null);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const med=a=>{a=a.filter(isNum).sort((x,y)=>x-y);if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2};
 const f=(n,d=2)=>isNum(n)?n.toFixed(d):'—';
 const sec=n=>isNum(n)?'~'+Math.round(n)+'s':'?s';
 function fmtK(n){if(!isNum(n))return '—';if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M';if(n>=1e3)return '$'+(n/1e3).toFixed(1).replace(/\.0$/,'')+'K';return '$'+Math.round(n)}
 
 function seed(){
-  const L=(date,name,devBuy,devPct,cc,cs,cp,open,sells,notes)=>({id:uid(),date,name,devBuy,devPct,clusterCount:cc,clusterSol:cs,clusterPct:cp,openMcap:open,sells,clusterExitSec:null,notes});
-  const S=p=>({sec:null,pct:p});
   return {devs:[{id:uid(),name:'petal',wallet:'4HXb7…vEpU',
-    notes:'Dev wallet is the earner: 93% win rate, green every day in October\nSide wallets are close to a coin flip (~43–49% win rate), red every day since Oct 9 apart from one\nAbout 30 launches a day, mostly pet and animal names (some Chinese)\nNo one holds for runners: everything is sold in the first wave',
-    launches:[
-      L('2026-10-14','Kimba',5.00,15.3,5,8.90,18.6,6190,[],''),
-      L('2026-10-14','Unnamed A',5.00,15.3,5,8.90,18.6,6270,[S(5.0),S(3.4)],''),
-      L('2026-10-14','Unnamed B',5.00,15.3,5,8.90,18.6,6180,[S(7.7)],''),
-      L('2026-10-15','Unnamed C',4.74,14.6,3,3.52,8.5,4490,[],'Lighter launch, only 3 side wallets'),
-      L('2026-10-15','Unnamed D',4.88,14.7,5,8.68,18.1,6000,[S(2.9)],'')
-    ]}]};
+    devBuy:5.00,devPct:15.3,sells:[{sec:null,pct:5.0},{sec:null,pct:3.4}],
+    clCount:5,clSol:8.90,clPct:18.6,clExit:null,openMcap:6200,
+    notes:'Dev wallet is the earner: 93% win rate, green every day in October\nSide wallets are close to a coin flip (~43–49% win rate), red every day since Oct 9 apart from one\nAbout 30 launches a day, mostly pet and animal names (some Chinese)\nNo one holds for runners: everything is sold in the first wave'}]};
 }
 function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return seed()}
 let DB=load();
@@ -92,26 +80,17 @@ function toast(t){const d=document.createElement('div');d.className='toast';d.te
 const getDev=id=>DB.devs.find(d=>d.id===id);
 const val=id=>document.getElementById(id).value;
 
-function pattern(d){
-  const L=d.launches||[];
-  const r={n:L.length,devBuy:med(L.map(l=>l.devBuy)),devPct:med(L.map(l=>l.devPct)),clCount:med(L.map(l=>l.clusterCount)),
-    clSol:med(L.map(l=>l.clusterSol)),clPct:med(L.map(l=>l.clusterPct)),openMcap:med(L.map(l=>l.openMcap)),clExit:med(L.map(l=>l.clusterExitSec)),steps:[]};
-  const max=Math.max(0,...L.map(l=>(l.sells||[]).length));
-  for(let i=0;i<max;i++){const rows=L.filter(l=>l.sells&&l.sells[i]);r.steps.push({sec:med(rows.map(l=>l.sells[i].sec)),pct:med(rows.map(l=>l.sells[i].pct)),n:rows.length})}
-  return r;
-}
-
-function strategy(d,r){
-  const s=[];
-  if(isNum(r.devBuy))s.push(`<b>Dev buy:</b> ${f(r.devBuy)} SOL → ${f(r.devPct,1)}% of supply`);
-  if(isNum(r.clSol))s.push(`<b>Side wallets:</b> ${f(r.clCount,0)} wallets, ${f(r.clSol)} SOL combined → ${f(r.clPct,1)}% of supply`);
-  if(isNum(r.devBuy))s.push(`<b>Opening total:</b> ${f((r.devBuy||0)+(r.clSol||0))} SOL · ${f((r.devPct||0)+(r.clPct||0),1)}% of supply`+(isNum(r.openMcap)?` · mcap ~${fmtK(r.openMcap)} after`:''));
-  if(r.steps.length)s.push(`<b>First dev sell:</b> ${sec(r.steps[0].sec)} in · −${f(r.steps[0].pct,1)}% of supply`);
-  if(r.steps.length>1)s.push(`<b>Then:</b> `+r.steps.slice(1).map(x=>`−${f(x.pct,1)}% at ${sec(x.sec)}`).join(', '));
-  if(r.steps.length&&isNum(r.devPct)){const sold=r.steps.reduce((a,x)=>a+(x.pct||0),0);if(sold>=r.devPct-0.3)s.push(`<b>Dev fully out:</b> ${sec(r.steps[r.steps.length-1].sec)}`)}
-  if(isNum(r.clExit))s.push(`<b>Side wallets out:</b> ${sec(r.clExit)}`);
+function strategy(d){
+  const s=[],st=d.sells||[];
+  if(isNum(d.devBuy))s.push(`<b>Dev buy:</b> ${f(d.devBuy)} SOL → ${f(d.devPct,1)}% of supply`);
+  if(isNum(d.clSol))s.push(`<b>Side wallets:</b> ${f(d.clCount,0)} wallets, ${f(d.clSol)} SOL combined → ${f(d.clPct,1)}% of supply`);
+  if(isNum(d.devBuy))s.push(`<b>Opening total:</b> ${f((d.devBuy||0)+(d.clSol||0))} SOL · ${f((d.devPct||0)+(d.clPct||0),1)}% of supply`+(isNum(d.openMcap)?` · mcap ~${fmtK(d.openMcap)} after`:''));
+  if(st.length)s.push(`<b>First dev sell:</b> ${sec(st[0].sec)} in · −${f(st[0].pct,1)}% of supply`);
+  if(st.length>1)s.push(`<b>Then:</b> `+st.slice(1).map(x=>`−${f(x.pct,1)}% at ${sec(x.sec)}`).join(', '));
+  if(st.length&&isNum(d.devPct)){const sold=st.reduce((a,x)=>a+(x.pct||0),0);if(sold>=d.devPct-0.3)s.push(`<b>Dev fully out:</b> ${sec(st[st.length-1].sec)}`)}
+  if(isNum(d.clExit))s.push(`<b>Side wallets out:</b> ${sec(d.clExit)}`);
   (d.notes||'').split('\n').map(x=>x.trim()).filter(Boolean).forEach(x=>s.push(esc(x)));
-  return s.length?`<ul class="strat">${s.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<div class="muted">Log a launch to build his strategy.</div>';
+  return s.length?`<ul class="strat">${s.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<div class="muted">Hit Edit to fill in his strategy.</div>';
 }
 
 function nav(){
@@ -128,84 +107,61 @@ window.addEventListener('hashchange',render);
 
 function homeView(){
   return `<div class="row between" style="margin-bottom:14px"><span class="muted">${DB.devs.length} dev${DB.devs.length===1?'':'s'}</span><button class="btn pri" onclick="editDev()">+ Add dev</button></div>`+
-  (DB.devs.map(d=>{const r=pattern(d);return `<a class="card" style="display:block;color:inherit" href="#/dev/${d.id}">
+  (DB.devs.map(d=>`<a class="card" style="display:block;color:inherit" href="#/dev/${d.id}">
     <div class="row between"><b style="font-family:Unbounded;font-size:17px">${esc(d.name)}</b><span class="muted" style="font-size:12px">${esc(d.wallet)}</span></div>
-    <div class="buy"><div><span>Dev buy</span>${f(r.devBuy)} SOL · ${f(r.devPct,1)}%</div><div><span>Side wallets</span>${f(r.clSol)} SOL · ${f(r.clPct,1)}%</div><div><span>Launches logged</span>${r.n}</div></div></a>`}).join('')||'<div class="card muted">No devs yet.</div>');
+    <div class="buy"><div><span>Dev buy</span>${f(d.devBuy)} SOL · ${f(d.devPct,1)}%</div><div><span>Side wallets</span>${f(d.clSol)} SOL · ${f(d.clPct,1)}%</div></div></a>`).join('')||'<div class="card muted">No devs yet.</div>');
 }
 
 function devView(d){
-  const r=pattern(d);let hold=r.devPct;
-  const steps=r.steps.map(x=>{hold=isNum(hold)?Math.max(0,hold-(x.pct||0)):null;const w=isNum(hold)&&r.devPct?hold/r.devPct*100:0;
+  let hold=d.devPct;
+  const steps=(d.sells||[]).map(x=>{hold=isNum(hold)?Math.max(0,hold-(x.pct||0)):null;const w=isNum(hold)&&d.devPct?hold/d.devPct*100:0;
     return `<li><span class="t">${sec(x.sec)}</span><span class="neg">−${f(x.pct,1)}%</span><div class="bar"><div style="width:${w}%"></div></div><span class="muted h">holding ${f(hold,1)}%</span></li>`}).join('');
-  const launches=(d.launches||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   return `<div class="row between" style="margin-bottom:16px"><div><a href="#/" class="muted" style="font-size:13px">← All devs</a><h1 style="margin-top:4px">${esc(d.name)}</h1></div>
-    <div class="row"><button class="btn" onclick="editDev('${d.id}')">Edit</button><button class="btn pri" onclick="editLaunch('${d.id}')">+ Log launch</button></div></div>
+    <button class="btn pri" onclick="editDev('${d.id}')">Edit</button></div>
 
   <div class="card"><h2>How he buys & sells</h2>
-    <div class="wallet dev"><div class="row between"><div class="row"><span class="tag">DEV</span><span class="muted" style="font-size:13px">${esc(d.wallet)}</span></div><span class="hint">typical of ${r.n} launches</span></div>
-      <div class="buy"><div><span>Buys</span><b class="big">${f(r.devBuy)}</b> SOL</div><div><span>Gets</span><b class="big">${f(r.devPct,1)}%</b> of supply</div></div>
-      ${steps?`<ul class="steps">${steps}</ul>`:'<div class="hint" style="margin-top:10px">No sells logged yet.</div>'}
+    <div class="wallet dev"><div class="row"><span class="tag">DEV</span><span class="muted" style="font-size:13px">${esc(d.wallet)}</span></div>
+      <div class="buy"><div><span>Buys</span><b class="big">${f(d.devBuy)}</b> SOL</div><div><span>Gets</span><b class="big">${f(d.devPct,1)}%</b> of supply</div></div>
+      ${steps?`<ul class="steps">${steps}</ul>`:'<div class="hint" style="margin-top:10px">No sells added yet.</div>'}
     </div>
-    <div class="wallet"><div class="row"><span class="tag">SIDE WALLETS</span><span class="muted" style="font-size:13px">${f(r.clCount,0)} wallets combined</span></div>
-      <div class="buy"><div><span>Buy</span><b class="big">${f(r.clSol)}</b> SOL</div><div><span>Get</span><b class="big">${f(r.clPct,1)}%</b> of supply</div><div><span>Out by</span><b class="big">${sec(r.clExit)}</b></div></div>
+    <div class="wallet"><div class="row"><span class="tag">SIDE WALLETS</span><span class="muted" style="font-size:13px">${f(d.clCount,0)} wallets combined</span></div>
+      <div class="buy"><div><span>Buy</span><b class="big">${f(d.clSol)}</b> SOL</div><div><span>Get</span><b class="big">${f(d.clPct,1)}%</b> of supply</div><div><span>Out by</span><b class="big">${sec(d.clExit)}</b></div></div>
     </div>
-    <div class="total"><span><b>Opening:</b> ${f((r.devBuy||0)+(r.clSol||0))} SOL · ${f((r.devPct||0)+(r.clPct||0),1)}% of supply</span><span class="muted">mcap after ~${fmtK(r.openMcap)}</span></div>
+    <div class="total"><span><b>Opening:</b> ${f((d.devBuy||0)+(d.clSol||0))} SOL · ${f((d.devPct||0)+(d.clPct||0),1)}% of supply</span><span class="muted">mcap after ~${fmtK(d.openMcap)}</span></div>
   </div>
 
-  <div class="card"><h2>Strategy</h2>${strategy(d,r)}</div>
-
-  <div class="card"><h2>Launches</h2><div class="scroll"><table class="tbl"><tr><th>Date</th><th>Coin</th><th>Dev</th><th>Side wallets</th><th>Dev sells</th><th></th></tr>
-  ${launches.map(l=>`<tr><td>${esc(l.date)}</td><td>${esc(l.name)||'—'}</td><td>${f(l.devBuy)} · ${f(l.devPct,1)}%</td><td>${f(l.clusterSol)} · ${f(l.clusterPct,1)}%</td>
-    <td>${(l.sells||[]).map(s=>`<span class="neg">−${f(s.pct,1)}%</span> <span class="muted">${sec(s.sec)}</span>`).join(' &nbsp;')||'<span class="muted">—</span>'}</td>
-    <td><button class="btn sm" onclick="editLaunch('${d.id}','${l.id}')">Edit</button></td></tr>`).join('')||'<tr><td colspan="6" class="muted">None yet.</td></tr>'}
-  </table></div></div>`;
+  <div class="card"><h2>Strategy</h2>${strategy(d)}</div>`;
 }
 
 function modal(html){const m=document.createElement('div');m.className='modalbg';m.id='modal';m.innerHTML=`<div class="modal">${html}</div>`;m.addEventListener('click',e=>{if(e.target===m)closeModal()});document.body.appendChild(m)}
 function closeModal(){const m=document.getElementById('modal');if(m)m.remove()}
-
-function editDev(id){
-  const d=id?getDev(id):{name:'',wallet:'',notes:''};
-  modal(`<h2>${id?'Edit dev':'Add dev'}</h2><div class="fields" style="grid-template-columns:1fr 1fr">
-    <div><label>Name</label><input id="dv-name" value="${esc(d.name)}"></div><div><label>Dev wallet</label><input id="dv-wallet" value="${esc(d.wallet)}"></div></div>
-    <div style="margin-top:10px"><label>Strategy notes (one per line, each becomes a bullet)</label><textarea id="dv-notes">${esc(d.notes)}</textarea></div>
-    <div class="row between" style="margin-top:16px">${id?`<button class="btn del" onclick="delDev('${id}')">Delete dev</button>`:'<span></span>'}
-    <div class="row"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveDev('${id||''}')">Save</button></div></div>`);
-}
-function saveDev(id){
-  const name=val('dv-name').trim();if(!name){toast('Name needed');return}
-  const o={name,wallet:val('dv-wallet').trim(),notes:val('dv-notes')};
-  if(id)Object.assign(getDev(id),o);else{id=uid();DB.devs.push({id,launches:[],...o})}
-  save();closeModal();location.hash='#/dev/'+id;render();
-}
-function delDev(id){if(!confirm('Delete this dev?'))return;DB.devs=DB.devs.filter(d=>d.id!==id);save();closeModal();location.hash='#/';render()}
-
 function sellRow(s={}){return `<div class="fields sellrow" style="grid-template-columns:1fr 1fr auto;margin-bottom:8px">
   <div><input type="number" step="any" placeholder="Seconds after launch" class="s-sec" value="${esc(s.sec??'')}"></div>
   <div><input type="number" step="any" placeholder="% of supply sold" class="s-pct" value="${esc(s.pct??'')}"></div>
   <div><button class="btn sm del" onclick="this.closest('.sellrow').remove()">✕</button></div></div>`}
-function editLaunch(did,lid){
-  const d=getDev(did);const l=lid?d.launches.find(x=>x.id===lid):{date:new Date().toISOString().slice(0,10),sells:[]};
-  const F=(id,lab,v,t='number')=>`<div><label>${lab}</label><input id="lf-${id}" type="${t}" ${t==='number'?'step="any"':''} value="${esc(v??'')}"></div>`;
-  modal(`<h2>${lid?'Edit launch':'Log launch'}</h2>
-  <div class="fields">${F('date','Date',l.date,'date')}${F('name','Coin (optional)',l.name,'text')}${F('open','Mcap after opening ($)',l.openMcap)}
-  ${F('devBuy','Dev buy (SOL)',l.devBuy)}${F('devPct','Dev % of supply',l.devPct)}<div></div>
-  ${F('cc','Side wallets (count)',l.clusterCount)}${F('cs','Side wallets SOL (total)',l.clusterSol)}${F('cp','Side wallets % (total)',l.clusterPct)}
-  ${F('cexit','Side wallets out by (secs)',l.clusterExitSec)}</div>
-  <h2 style="margin-top:18px">Dev sells, in order</h2><div id="sells">${(l.sells||[]).map(sellRow).join('')}</div>
+function editDev(id){
+  const d=id?getDev(id):{sells:[]};
+  const F=(k,lab,v,t='number')=>`<div><label>${lab}</label><input id="f-${k}" type="${t}" ${t==='number'?'step="any"':''} value="${esc(v??'')}"></div>`;
+  modal(`<h2>${id?'Edit dev':'Add dev'}</h2>
+  <div class="fields">${F('name','Name',d.name,'text')}${F('wallet','Dev wallet',d.wallet,'text')}${F('open','Mcap after opening ($)',d.openMcap)}
+  ${F('devBuy','Dev buy (SOL)',d.devBuy)}${F('devPct','Dev % of supply',d.devPct)}<div></div>
+  ${F('cc','Side wallets (count)',d.clCount)}${F('cs','Side wallets SOL (total)',d.clSol)}${F('cp','Side wallets % (total)',d.clPct)}
+  ${F('cexit','Side wallets out by (secs)',d.clExit)}</div>
+  <h2 style="margin-top:18px">Dev sells, in order</h2><div id="sells">${(d.sells||[]).map(sellRow).join('')}</div>
   <button class="btn sm" onclick="document.getElementById('sells').insertAdjacentHTML('beforeend',sellRow())">+ Add sell</button>
-  <div class="row between" style="margin-top:18px">${lid?`<button class="btn del" onclick="delLaunch('${did}','${lid}')">Delete</button>`:'<span></span>'}
-  <div class="row"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveLaunch('${did}','${lid||''}')">Save</button></div></div>`);
+  <div style="margin-top:14px"><label>Strategy notes (one per line, each becomes a bullet)</label><textarea id="f-notes">${esc(d.notes)}</textarea></div>
+  <div class="row between" style="margin-top:16px">${id?`<button class="btn del" onclick="delDev('${id}')">Delete dev</button>`:'<span></span>'}
+  <div class="row"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn pri" onclick="saveDev('${id||''}')">Save</button></div></div>`);
 }
-function saveLaunch(did,lid){
-  const d=getDev(did);
+function saveDev(id){
+  const name=val('f-name').trim();if(!name){toast('Name needed');return}
   const sells=[...document.querySelectorAll('#sells .sellrow')].map(r=>({sec:num(r.querySelector('.s-sec').value),pct:num(r.querySelector('.s-pct').value)})).filter(s=>isNum(s.sec)||isNum(s.pct));
-  const o={date:val('lf-date'),name:val('lf-name').trim(),openMcap:num(val('lf-open')),devBuy:num(val('lf-devBuy')),devPct:num(val('lf-devPct')),
-    clusterCount:num(val('lf-cc')),clusterSol:num(val('lf-cs')),clusterPct:num(val('lf-cp')),clusterExitSec:num(val('lf-cexit')),sells};
-  if(lid)Object.assign(d.launches.find(x=>x.id===lid),o);else d.launches.push({id:uid(),...o});
-  save();closeModal();render();
+  const o={name,wallet:val('f-wallet').trim(),openMcap:num(val('f-open')),devBuy:num(val('f-devBuy')),devPct:num(val('f-devPct')),
+    clCount:num(val('f-cc')),clSol:num(val('f-cs')),clPct:num(val('f-cp')),clExit:num(val('f-cexit')),sells,notes:val('f-notes')};
+  if(id)Object.assign(getDev(id),o);else{id=uid();DB.devs.push({id,...o})}
+  save();closeModal();location.hash='#/dev/'+id;render();
 }
-function delLaunch(did,lid){if(!confirm('Delete this launch?'))return;const d=getDev(did);d.launches=d.launches.filter(x=>x.id!==lid);save();closeModal();render()}
+function delDev(id){if(!confirm('Delete this dev?'))return;DB.devs=DB.devs.filter(d=>d.id!==id);save();closeModal();location.hash='#/';render()}
 
 function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('Copied'),()=>fallback(t))}else fallback(t)}
 function fallback(t){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Copied')}catch(e){toast('Copy failed')}a.remove()}
